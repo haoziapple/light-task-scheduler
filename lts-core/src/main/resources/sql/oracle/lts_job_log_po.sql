@@ -1,14 +1,3 @@
-declare
-  num number;
-begin
-  select count(1) into num from USER_TABLES where TABLE_NAME='LTS_JOB_LOG_PO';
-  if num = 1 then
-  EXECUTE IMMEDIATE '';
-  END IF;
-end ;
-/
-
-
 create table LTS_JOB_LOG_PO
 (
   id  NUMBER(20) not null,
@@ -37,11 +26,10 @@ create table LTS_JOB_LOG_PO
   rely_on_prev_cycle NUMBER(4),
   repeat_count NUMBER(11) DEFAULT 0,
   repeated_count NUMBER(11) DEFAULT 0,
-  repeat_interval NUMBER(20) DEFAULT 0
+  repeat_interval NUMBER(20) DEFAULT 0,
+  constraint PK_JOB_LOG primary key (ID)
 );
-alter table LTS_JOB_LOG_PO
-  add constraint PK_JOB_LOG primary key (ID)
-  using index;
+
 create index IDX1_JOB_LOG on LTS_JOB_LOG_PO (log_time);
 create index IDX2_JOB_LOG on LTS_JOB_LOG_PO (task_id,task_tracker_node_group);
 create index IDX3_JOB_LOG on LTS_JOB_LOG_PO (real_task_id,task_tracker_node_group);

@@ -29,8 +29,8 @@ create table {tableName}
   constraint UQE2_{tableName} unique (TASK_ID, TASK_TRACKER_NODE_GROUP)
 );
 
-create index IDX1_{tableName} on {tableName} (REAL_TASK_ID, TASK_TRACKER_NODE_GROUP);
-create index IDX2_{tableName} on {tableName} (RELY_ON_PREV_CYCLE,LAST_GENERATE_TRIGGER_TIME);
+create index IDX1_{tableName} on {tableName} (JOB_TYPE);
+create index IDX2_{tableName} on {tableName} (REAL_TASK_ID, TASK_TRACKER_NODE_GROUP);
 
 CREATE SEQUENCE SEQ_{tableName}
   START WITH 1

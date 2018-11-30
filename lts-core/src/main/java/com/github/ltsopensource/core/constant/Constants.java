@@ -25,7 +25,7 @@ public interface Constants {
 
     String CHARSET = "UTF-8";
 
-    int DEFAULT_TIMEOUT = 1000;
+    int DEFAULT_TIMEOUT = 5000;
 
     int DEFAULT_SESSION_TIMEOUT = 60 * 1000;
 

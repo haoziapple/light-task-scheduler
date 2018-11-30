@@ -32,21 +32,21 @@ public class OracleJobQueueFactory implements JobQueueFactory {
 
     @Override
     public JobFeedbackQueue getJobFeedbackQueue(Config config) {
-        return null;
+        return new OracleJobFeedbackQueue(config);
     }
 
     @Override
     public NodeGroupStore getNodeGroupStore(Config config) {
-        return null;
+        return new OracleNodeGroupStore(config);
     }
 
     @Override
     public SuspendJobQueue getSuspendJobQueue(Config config) {
-        return null;
+        return new OracleSuspendJobQueue(config);
     }
 
     @Override
     public PreLoader getPreLoader(AppContext appContext) {
-        return null;
+        return new OraclePreLoader(appContext);
     }
 }

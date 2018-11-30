@@ -376,4 +376,17 @@
             <email>254963746@qq.com</email>
         </developer>
     </developers>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <name>Internal Releases</name>
+            <url>http://10.100.2.137:8081/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <name>Internal snapshots</name>
+            <url>http://10.100.2.137:8081/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
