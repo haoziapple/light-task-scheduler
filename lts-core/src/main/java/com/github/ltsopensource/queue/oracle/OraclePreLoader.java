@@ -36,9 +36,9 @@ public class OraclePreLoader extends AbstractPreLoader {
                 .select()
                 .all()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
-                .where("job_id = ?", jobId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .oracleTable(getTableName(taskTrackerNodeGroup))
+                .where("JOB_ID = ?", jobId)
+                .and("TASK_TRACKER_NODE_GROUP = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -47,14 +47,14 @@ public class OraclePreLoader extends AbstractPreLoader {
         try {
             return new UpdateSql(sqlTemplate)
                     .update()
-                    .table(getTableName(taskTrackerNodeGroup))
-                    .set("is_running", true)
-                    .set("task_tracker_identity", taskTrackerIdentity)
-                    .set("gmt_modified", SystemClock.now())
-                    .where("job_id = ?", jobId)
-                    .and("is_running = ?", false)
-                    .and("trigger_time = ?", triggerTime)
-                    .and("gmt_modified = ?", gmtModified)
+                    .oracleTable(getTableName(taskTrackerNodeGroup))
+                    .set("IS_RUNNING", true)
+                    .set("TASK_TRACKER_IDENTITY", taskTrackerIdentity)
+                    .set("GMT_MODIFIED", SystemClock.now())
+                    .where("JOB_ID = ?", jobId)
+                    .and("IS_RUNNING = ?", false)
+                    .and("TRIGGER_TIME = ?", triggerTime)
+                    .and("GMT_MODIFIED = ?", gmtModified)
                     .doUpdate() == 1;
         } catch (Exception e) {
             LOGGER.error("Error when lock job:" + e.getMessage(), e);
@@ -66,17 +66,18 @@ public class OraclePreLoader extends AbstractPreLoader {
     protected List<JobPo> load(String loadTaskTrackerNodeGroup, int loadSize) {
         try {
             return new SelectSql(sqlTemplate)
+                    .rowNumStart()
                     .select()
                     .all()
                     .from()
-                    .table(getTableName(loadTaskTrackerNodeGroup))
-                    .where("is_running = ?", false)
-                    .and("trigger_time< ?", SystemClock.now())
+                    .oracleTable(getTableName(loadTaskTrackerNodeGroup))
+                    .where("IS_RUNNING = ?", false)
+                    .and("TRIGGER_TIME< ?", SystemClock.now())
                     .orderBy()
-                    .column("priority", OrderByType.ASC)
-                    .column("trigger_time", OrderByType.ASC)
-                    .column("gmt_created", OrderByType.ASC)
-                    .limit(0, loadSize)
+                    .column("PRIORITY", OrderByType.ASC)
+                    .column("TRIGGER_TIME", OrderByType.ASC)
+                    .column("GMT_CREATED", OrderByType.ASC)
+                    .rowNumEnd(0, loadSize)
                     .list(RshHolder.JOB_PO_LIST_RSH);
         } catch (Exception e) {
             LOGGER.error("Error when load job:" + e.getMessage(), e);
@@ -85,6 +86,8 @@ public class OraclePreLoader extends AbstractPreLoader {
     }
 
     private String getTableName(String taskTrackerNodeGroup) {
-        return JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup);
+        return JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup)
+                .replaceAll("-", "_")
+                .toUpperCase();
     }
 }

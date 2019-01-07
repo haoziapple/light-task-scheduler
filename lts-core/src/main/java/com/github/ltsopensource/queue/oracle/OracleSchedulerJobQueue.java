@@ -24,23 +24,24 @@ public abstract class OracleSchedulerJobQueue extends AbstractOracleJobQueue imp
     public boolean updateLastGenerateTriggerTime(String jobId, Long lastGenerateTriggerTime) {
         return new UpdateSql(getSqlTemplate())
                 .update()
-                .table(getTableName())
-                .set("last_generate_trigger_time", lastGenerateTriggerTime)
-                .set("gmt_modified", SystemClock.now())
-                .where("job_id = ? ", jobId)
+                .oracleTable(getTableName())
+                .set("LAST_GENERATE_TRIGGER_TIME", lastGenerateTriggerTime)
+                .set("GMT_MODIFIED", SystemClock.now())
+                .where("JOB_ID = ? ", jobId)
                 .doUpdate() == 1;
     }
 
     @Override
     public List<JobPo> getNeedGenerateJobPos(Long checkTime, int topSize) {
         return new SelectSql(getSqlTemplate())
+                .rowNumStart()
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("rely_on_prev_cycle = ?", false)
-                .and("last_generate_trigger_time <= ?", checkTime)
-                .limit(0, topSize)
+                .oracleTable(getTableName())
+                .where("RELY_ON_PREV_CYCLE = ?", false)
+                .and("LAST_GENERATE_TRIGGER_TIME <= ?", checkTime)
+                .rowNumEnd(0, topSize)
                 .list(RshHolder.JOB_PO_LIST_RSH);
     }
 

@@ -18,7 +18,9 @@ import com.github.ltsopensource.store.jdbc.builder.UpdateSql;
 public class OracleRepeatJobQueue extends OracleSchedulerJobQueue implements RepeatJobQueue {
     public OracleRepeatJobQueue(Config config) {
         super(config);
-        createTable(readSqlFile("sql/oracle/lts_repeat_job_queue.sql", getTableName()));
+        if(!isOracleTableExist(getTableName())) {
+            createTable(readSqlFile("sql/oracle/lts_repeat_job_queue.sql", getTableName()));
+        }
     }
 
     @Override
@@ -32,8 +34,8 @@ public class OracleRepeatJobQueue extends OracleSchedulerJobQueue implements Rep
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName())
+                .where("JOB_ID = ?", jobId)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -42,8 +44,8 @@ public class OracleRepeatJobQueue extends OracleSchedulerJobQueue implements Rep
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName())
+                .where("JOB_ID = ?", jobId)
                 .doDelete() == 1;
     }
 
@@ -53,9 +55,9 @@ public class OracleRepeatJobQueue extends OracleSchedulerJobQueue implements Rep
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("task_id = ?", taskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .oracleTable(getTableName())
+                .where("TASK_ID = ?", taskId)
+                .and("TASK_TRACKER_NODE_GROUP = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -68,10 +70,10 @@ public class OracleRepeatJobQueue extends OracleSchedulerJobQueue implements Rep
             }
             if (new UpdateSql(getSqlTemplate())
                     .update()
-                    .table(getTableName())
-                    .set("repeated_count", jobPo.getRepeatedCount() + 1)
-                    .where("job_id = ?", jobId)
-                    .and("repeated_count = ?", jobPo.getRepeatedCount())
+                    .oracleTable(getTableName())
+                    .set("REPEATED_COUNT", jobPo.getRepeatedCount() + 1)
+                    .where("JOB_ID = ?", jobId)
+                    .and("REPEATED_COUNT = ?", jobPo.getRepeatedCount())
                     .doUpdate() == 1) {
                 return jobPo.getRepeatedCount() + 1;
             }
@@ -85,6 +87,6 @@ public class OracleRepeatJobQueue extends OracleSchedulerJobQueue implements Rep
 
     @Override
     protected String getTableName() {
-        return JobQueueUtils.REPEAT_JOB_QUEUE;
+        return JobQueueUtils.REPEAT_JOB_QUEUE.toUpperCase();
     }
 }

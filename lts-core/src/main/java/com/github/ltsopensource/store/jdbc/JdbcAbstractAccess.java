@@ -2,13 +2,16 @@ package com.github.ltsopensource.store.jdbc;
 
 import com.github.ltsopensource.core.cluster.Config;
 import com.github.ltsopensource.core.commons.file.FileUtils;
+import com.github.ltsopensource.core.commons.utils.StringUtils;
 import com.github.ltsopensource.core.constant.Constants;
 import com.github.ltsopensource.core.constant.ExtConfig;
 import com.github.ltsopensource.core.exception.LtsRuntimeException;
+import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 import com.github.ltsopensource.store.jdbc.exception.JdbcException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 /**
  * @author Robert HG (254963746@qq.com) on 5/19/15.
@@ -44,10 +47,26 @@ public abstract class JdbcAbstractAccess {
     protected void createTable(String sql) throws JdbcException {
         if (config.getParameter(ExtConfig.NEED_CREATE_DB_TABLE, true)) {
             try {
-                getSqlTemplate().createTable(sql);
+                for (String s : sql.split(";")) {
+                    if (StringUtils.isNotEmpty(s)) {
+                        getSqlTemplate().createTable(s);
+                    }
+                }
             } catch (Exception e) {
                 throw new JdbcException("Create table error, sql=" + sql, e);
             }
         }
+    }
+
+    protected boolean isOracleTableExist(String tableName) throws JdbcException {
+        BigDecimal count = (BigDecimal) new SelectSql(getSqlTemplate())
+                .select()
+                .columns("COUNT(1)")
+                .from()
+                .oracleTable("USER_TABLES")
+                .where("TABLE_NAME = ?", tableName)
+                .single();
+
+        return count.compareTo(BigDecimal.ZERO) > 0;
     }
 }

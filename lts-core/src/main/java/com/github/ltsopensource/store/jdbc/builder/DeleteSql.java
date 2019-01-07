@@ -46,6 +46,11 @@ public class DeleteSql {
         return this;
     }
 
+    public DeleteSql oracleTable(String table) {
+        sql.append(table);
+        return this;
+    }
+
     public DeleteSql where() {
         sql.append(" WHERE ");
         return this;

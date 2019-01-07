@@ -15,7 +15,7 @@ import java.util.Properties;
 public class JobTrackerCfgLoader {
 
     public static JobTrackerCfg load(String confPath) throws CfgException {
-
+//        String cfgPath = confPath + "/jobtracker-mysql.cfg";
         String cfgPath = confPath + "/jobtracker.cfg";
         String log4jPath = confPath + "/log4j.properties";
 

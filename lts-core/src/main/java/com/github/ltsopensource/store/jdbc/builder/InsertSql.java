@@ -40,6 +40,12 @@ public class InsertSql {
         return this;
     }
 
+    public InsertSql oracleInsert(String table) {
+        this.sql.append("INSERT INTO ");
+        sql.append(table);
+        return this;
+    }
+
     public InsertSql columns(String... columns) {
         if (columns == null || columns.length == 0) {
             throw new JdbcException("columns must have length");
@@ -56,6 +62,36 @@ public class InsertSql {
             sql.append(split);
             split = ", ";
             sql.append("`").append(column.trim()).append("`");
+        }
+        sql.append(") VALUES ");
+
+        sql.append("(");
+        split = "";
+        for (int i = 0; i < columnsSize; i++) {
+            sql.append(split);
+            split = ",";
+            sql.append("?");
+        }
+        sql.append(")");
+        return this;
+    }
+
+    public InsertSql oracleColumns(String... columns) {
+        if (columns == null || columns.length == 0) {
+            throw new JdbcException("columns must have length");
+        }
+        if (columnsSize > 0) {
+            throw new JdbcException("columns already set");
+        }
+
+        columnsSize = columns.length;
+
+        sql.append("(");
+        String split = "";
+        for (String column : columns) {
+            sql.append(split);
+            split = ", ";
+            sql.append(column.trim());
         }
         sql.append(") VALUES ");
 

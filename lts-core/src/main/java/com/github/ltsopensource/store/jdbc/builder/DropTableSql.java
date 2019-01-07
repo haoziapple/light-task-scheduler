@@ -25,6 +25,16 @@ public class DropTableSql {
         return this;
     }
 
+    public DropTableSql oracleDrop(String table) {
+        sql.append("DROP TABLE ").append(table);
+        return this;
+    }
+
+    public DropTableSql oracleDropSeq(String table) {
+        sql.append("DROP SEQUENCE ").append("SEQ_").append(table);
+        return this;
+    }
+
     public boolean doDrop() {
 
         String finalSQL = sql.toString();

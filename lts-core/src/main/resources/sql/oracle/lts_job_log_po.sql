@@ -9,7 +9,7 @@ create table LTS_JOB_LOG_PO
   code  VARCHAR2(32),
   job_type  VARCHAR2(32),
   task_tracker_identity VARCHAR2(64),
-  level VARCHAR2(32),
+  job_level VARCHAR2(32),
   task_id VARCHAR2(64),
   real_task_id  VARCHAR2(64),
   job_id  VARCHAR2(64) DEFAULT '',
@@ -29,20 +29,10 @@ create table LTS_JOB_LOG_PO
   repeat_interval NUMBER(20) DEFAULT 0,
   constraint PK_JOB_LOG primary key (ID)
 );
-
 create index IDX1_JOB_LOG on LTS_JOB_LOG_PO (log_time);
 create index IDX2_JOB_LOG on LTS_JOB_LOG_PO (task_id,task_tracker_node_group);
 create index IDX3_JOB_LOG on LTS_JOB_LOG_PO (real_task_id,task_tracker_node_group);
 
-CREATE SEQUENCE SEQ_JOB_LOG
+CREATE SEQUENCE SEQ_JOB_LOG_PO
   START WITH 1
   INCREMENT BY 1;
-
-CREATE OR REPLACE TRIGGER TRIGGER_JOB_LOG
-  BEFORE INSERT ON LTS_JOB_LOG_PO
-  FOR EACH ROW
-BEGIN
-  SELECT SEQ_JOB_LOG.NEXTVAL
-    INTO :new.ID
-    FROM dual;
-END;

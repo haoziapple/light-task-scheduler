@@ -37,12 +37,3 @@ create index IDX4_{tableName} on {tableName} (GMT_CREATED);
 CREATE SEQUENCE SEQ_{tableName}
   START WITH 1
   INCREMENT BY 1;
-
-CREATE OR REPLACE TRIGGER TRIGGER_{tableName}
-  BEFORE INSERT ON {tableName}
-  FOR EACH ROW
-BEGIN
-  SELECT SEQ_{tableName}.NEXTVAL
-    INTO :new.ID
-    FROM dual;
-END;

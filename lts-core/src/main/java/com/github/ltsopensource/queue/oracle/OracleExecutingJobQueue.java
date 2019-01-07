@@ -20,7 +20,9 @@ public class OracleExecutingJobQueue extends AbstractOracleJobQueue implements E
     public OracleExecutingJobQueue(Config config) {
         super(config);
         // create table
-        createTable(readSqlFile("sql/oracle/lts_executing_job_queue.sql", getTableName()));
+        if(!isOracleTableExist(getTableName())) {
+            createTable(readSqlFile("sql/oracle/lts_executing_job_queue.sql", getTableName()));
+        }
     }
 
     @Override
@@ -33,8 +35,8 @@ public class OracleExecutingJobQueue extends AbstractOracleJobQueue implements E
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName())
+                .where("JOB_ID = ?", jobId)
                 .doDelete() == 1;
     }
 
@@ -44,8 +46,8 @@ public class OracleExecutingJobQueue extends AbstractOracleJobQueue implements E
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("task_tracker_identity = ?", taskTrackerIdentity)
+                .oracleTable(getTableName())
+                .where("TASK_TRACKER_IDENTITY = ?", taskTrackerIdentity)
                 .list(RshHolder.JOB_PO_LIST_RSH);
     }
 
@@ -55,8 +57,8 @@ public class OracleExecutingJobQueue extends AbstractOracleJobQueue implements E
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("gmt_modified < ?", deadline)
+                .oracleTable(getTableName())
+                .where("GMT_MODIFIED < ?", deadline)
                 .list(RshHolder.JOB_PO_LIST_RSH);
     }
 
@@ -66,9 +68,9 @@ public class OracleExecutingJobQueue extends AbstractOracleJobQueue implements E
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("task_id = ?", taskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .oracleTable(getTableName())
+                .where("TASK_ID = ?", taskId)
+                .and("TASK_TRACKER_NODE_GROUP = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -78,8 +80,8 @@ public class OracleExecutingJobQueue extends AbstractOracleJobQueue implements E
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName())
+                .where("JOB_ID = ?", jobId)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -89,6 +91,6 @@ public class OracleExecutingJobQueue extends AbstractOracleJobQueue implements E
     }
 
     private String getTableName() {
-        return JobQueueUtils.EXECUTING_JOB_QUEUE;
+        return JobQueueUtils.EXECUTING_JOB_QUEUE.toUpperCase();
     }
 }

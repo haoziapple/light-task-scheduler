@@ -62,6 +62,11 @@ public class SelectSql {
         return this;
     }
 
+    public SelectSql oracleTable(String table) {
+        sql.append(table);
+        return this;
+    }
+
     public SelectSql tables(String... tables) {
         String split = "";
         for (String table : tables) {
@@ -276,5 +281,20 @@ public class SelectSql {
 
     public String getSQL() {
         return sql.toString();
+    }
+
+    public SelectSql appendStr(String s) {
+        sql.append(s);
+        return this;
+    }
+
+    public SelectSql rowNumStart() {
+        sql.append("SELECT * FROM (SELECT A.*, ROWNUM RN FROM (");
+        return this;
+    }
+
+    public SelectSql rowNumEnd(int start, int size) {
+        sql.append(" ) A  WHERE ROWNUM <= ").append(start + size).append(") WHERE RN >=").append(start + 1);
+        return this;
     }
 }

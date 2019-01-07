@@ -17,7 +17,9 @@ import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 public class OracleSuspendJobQueue extends AbstractOracleJobQueue implements SuspendJobQueue {
     public OracleSuspendJobQueue(Config config) {
         super(config);
-        createTable(readSqlFile("sql/oracle/lts_suspend_job_queue.sql", getTableName()));
+        if(!isOracleTableExist(getTableName())) {
+            createTable(readSqlFile("sql/oracle/lts_suspend_job_queue.sql", getTableName()));
+        }
     }
 
     @Override
@@ -31,8 +33,8 @@ public class OracleSuspendJobQueue extends AbstractOracleJobQueue implements Sus
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName())
+                .where("JOB_ID = ?", jobId)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -41,8 +43,8 @@ public class OracleSuspendJobQueue extends AbstractOracleJobQueue implements Sus
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName())
+                .where("JOB_ID = ?", jobId)
                 .doDelete() == 1;
     }
 
@@ -52,9 +54,9 @@ public class OracleSuspendJobQueue extends AbstractOracleJobQueue implements Sus
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("task_id = ?", taskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .oracleTable(getTableName())
+                .where("TASK_ID = ?", taskId)
+                .and("TASK_TRACKER_NODE_GROUP = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -64,6 +66,6 @@ public class OracleSuspendJobQueue extends AbstractOracleJobQueue implements Sus
     }
 
     private String getTableName() {
-        return JobQueueUtils.SUSPEND_JOB_QUEUE;
+        return JobQueueUtils.SUSPEND_JOB_QUEUE.toUpperCase();
     }
 }

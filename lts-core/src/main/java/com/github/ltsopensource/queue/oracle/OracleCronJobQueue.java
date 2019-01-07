@@ -17,7 +17,9 @@ import com.github.ltsopensource.store.jdbc.builder.SelectSql;
 public class OracleCronJobQueue extends OracleSchedulerJobQueue implements CronJobQueue {
     public OracleCronJobQueue(Config config) {
         super(config);
-        createTable(readSqlFile("sql/oracle/lts_cron_job_queue.sql", getTableName()));
+        if(!isOracleTableExist(getTableName())) {
+            createTable(readSqlFile("sql/oracle/lts_cron_job_queue.sql", getTableName()));
+        }
     }
 
 
@@ -33,8 +35,8 @@ public class OracleCronJobQueue extends OracleSchedulerJobQueue implements CronJ
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName())
+                .where("JOB_ID = ?", jobId)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -43,8 +45,8 @@ public class OracleCronJobQueue extends OracleSchedulerJobQueue implements CronJ
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName())
+                .where("JOB_ID = ?", jobId)
                 .doDelete() == 1;
     }
 
@@ -54,9 +56,9 @@ public class OracleCronJobQueue extends OracleSchedulerJobQueue implements CronJ
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("task_id = ?", taskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .oracleTable(getTableName())
+                .where("TASK_ID = ?", taskId)
+                .and("TASK_TRACKER_NODE_GROUP = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -67,6 +69,6 @@ public class OracleCronJobQueue extends OracleSchedulerJobQueue implements CronJ
 
     @Override
     protected String getTableName() {
-        return JobQueueUtils.CRON_JOB_QUEUE;
+        return JobQueueUtils.CRON_JOB_QUEUE.toUpperCase();
     }
 }

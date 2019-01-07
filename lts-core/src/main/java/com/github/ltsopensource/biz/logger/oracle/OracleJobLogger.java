@@ -25,7 +25,9 @@ import java.util.List;
 public class OracleJobLogger extends JdbcAbstractAccess implements JobLogger {
     public OracleJobLogger(Config config) {
         super(config);
-        createTable(readSqlFile("sql/oracle/lts_job_log_po.sql"));
+        if(!isOracleTableExist(getTableName())) {
+            createTable(readSqlFile("sql/oracle/lts_job_log_po.sql"));
+        }
     }
 
     @Override
@@ -155,6 +157,6 @@ public class OracleJobLogger extends JdbcAbstractAccess implements JobLogger {
     }
 
     private String getTableName() {
-        return "lts_job_log_po";
+        return "lts_job_log_po".toUpperCase();
     }
 }

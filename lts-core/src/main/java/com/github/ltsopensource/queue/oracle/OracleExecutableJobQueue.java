@@ -30,14 +30,16 @@ public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements E
 
     @Override
     public boolean createQueue(String taskTrackerNodeGroup) {
-        createTable(readSqlFile("sql/oracle/lts_executable_job_queue.sql", getTableName(taskTrackerNodeGroup)));
+        if(!isOracleTableExist(getTableName(taskTrackerNodeGroup))) {
+            createTable(readSqlFile("sql/oracle/lts_executable_job_queue.sql", getTableName(taskTrackerNodeGroup)));
+        }
         return true;
     }
 
     @Override
     public boolean removeQueue(String taskTrackerNodeGroup) {
         return new DropTableSql(getSqlTemplate())
-                .drop(JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup))
+                .drop(getTableName(taskTrackerNodeGroup))
                 .doDrop();
     }
 
@@ -59,8 +61,8 @@ public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements E
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
-                .where("job_id = ?", jobId)
+                .oracleTable(getTableName(taskTrackerNodeGroup))
+                .where("JOB_ID = ?", jobId)
                 .doDelete() == 1;
     }
 
@@ -70,9 +72,9 @@ public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements E
                 .select()
                 .columns("COUNT(1)")
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
-                .where("real_task_id = ?", realTaskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .oracleTable(getTableName(taskTrackerNodeGroup))
+                .where("REAL_TASK_ID = ?", realTaskId)
+                .and("TASK_TRACKER_NODE_GROUP = ?", taskTrackerNodeGroup)
                 .single();
     }
 
@@ -81,9 +83,9 @@ public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements E
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
-                .where("real_task_id = ?", realTaskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .oracleTable(getTableName(taskTrackerNodeGroup))
+                .where("REAL_TASK_ID = ?", realTaskId)
+                .and("TASK_TRACKER_NODE_GROUP = ?", taskTrackerNodeGroup)
                 .doDelete();
         return true;
     }
@@ -92,11 +94,11 @@ public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements E
     public void resume(JobPo jobPo) {
         new UpdateSql(getSqlTemplate())
                 .update()
-                .table(getTableName(jobPo.getTaskTrackerNodeGroup()))
-                .set("is_running", false)
-                .set("task_tracker_identity", null)
-                .set("gmt_modified", SystemClock.now())
-                .where("job_id=?", jobPo.getJobId())
+                .oracleTable(getTableName(jobPo.getTaskTrackerNodeGroup()))
+                .set("IS_RUNNING", false)
+                .set("TASK_TRACKER_IDENTITY", null)
+                .set("GMT_MODIFIED", SystemClock.now())
+                .where("JOB_ID=?", jobPo.getJobId())
                 .doUpdate();
     }
 
@@ -106,9 +108,9 @@ public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements E
                 .select()
                 .all()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
-                .where("is_running = ?", true)
-                .and("gmt_modified < ?", deadline)
+                .oracleTable(getTableName(taskTrackerNodeGroup))
+                .where("IS_RUNNING = ?", true)
+                .and("GMT_MODIFIED < ?", deadline)
                 .list(RshHolder.JOB_PO_LIST_RSH);
     }
 
@@ -118,9 +120,9 @@ public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements E
                 .select()
                 .all()
                 .from()
-                .table(getTableName(taskTrackerNodeGroup))
-                .where("task_id = ?", taskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .oracleTable(getTableName(taskTrackerNodeGroup))
+                .where("TASK_ID = ?", taskId)
+                .and("TASK_TRACKER_NODE_GROUP = ?", taskTrackerNodeGroup)
                 .single(RshHolder.JOB_PO_RSH);
     }
 
@@ -133,6 +135,8 @@ public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements E
     }
 
     private String getTableName(String taskTrackerNodeGroup) {
-        return JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup);
+        return JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup)
+                .replaceAll("-", "_")
+                .toUpperCase();
     }
 }

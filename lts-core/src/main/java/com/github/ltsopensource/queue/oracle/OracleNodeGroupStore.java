@@ -12,6 +12,7 @@ import com.github.ltsopensource.queue.mysql.support.RshHolder;
 import com.github.ltsopensource.store.jdbc.JdbcAbstractAccess;
 import com.github.ltsopensource.store.jdbc.builder.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -22,26 +23,28 @@ import java.util.List;
 public class OracleNodeGroupStore extends JdbcAbstractAccess implements NodeGroupStore {
     public OracleNodeGroupStore(Config config) {
         super(config);
-        createTable(readSqlFile("sql/oracle/lts_node_group_store.sql", JobQueueUtils.NODE_GROUP_STORE));
+        if(!isOracleTableExist(getTableName())) {
+            createTable(readSqlFile("sql/oracle/lts_node_group_store.sql", getTableName()));
+        }
     }
 
     @Override
     public void addNodeGroup(NodeType nodeType, String name) {
-        Long count = new SelectSql(getSqlTemplate())
+        BigDecimal count = new SelectSql(getSqlTemplate())
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName())
-                .where("node_type = ?", nodeType.name())
-                .and("name = ?", name)
+                .oracleTable(getTableName())
+                .where("NODE_TYPE = ?", nodeType.name())
+                .and("NAME = ?", name)
                 .single();
-        if (count > 0) {
+        if (count.longValue() > 0) {
             //  already exist
             return;
         }
         new InsertSql(getSqlTemplate())
-                .insert(getTableName())
-                .columns("node_type", "name", "gmt_created")
+                .oracleInsert(getTableName())
+                .oracleColumns("NODE_TYPE", "NAME", "GMT_CREATED")
                 .values(nodeType.name(), name, SystemClock.now())
                 .doInsert();
     }
@@ -51,9 +54,9 @@ public class OracleNodeGroupStore extends JdbcAbstractAccess implements NodeGrou
         new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName())
-                .where("node_type = ?", nodeType.name())
-                .and("name = ?", name)
+                .oracleTable(getTableName())
+                .where("NODE_TYPE = ?", nodeType.name())
+                .and("NAME = ?", name)
                 .doDelete();
     }
 
@@ -63,8 +66,8 @@ public class OracleNodeGroupStore extends JdbcAbstractAccess implements NodeGrou
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
-                .where("node_type = ?", nodeType.name())
+                .oracleTable(getTableName())
+                .where("NODE_TYPE = ?", nodeType.name())
                 .list(RshHolder.NODE_GROUP_LIST_RSH);
     }
 
@@ -76,11 +79,11 @@ public class OracleNodeGroupStore extends JdbcAbstractAccess implements NodeGrou
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName())
+                .oracleTable(getTableName())
                 .whereSql(
                         new WhereSql()
-                                .andOnNotNull("node_type = ?", request.getNodeType() == null ? null : request.getNodeType().name())
-                                .andOnNotEmpty("name = ?", request.getNodeGroup())
+                                .andOnNotNull("NODE_TYPE = ?", request.getNodeType() == null ? null : request.getNodeType().name())
+                                .andOnNotEmpty("NAME = ?", request.getNodeGroup())
                 )
                 .single();
         response.setResults(results.intValue());
@@ -89,18 +92,19 @@ public class OracleNodeGroupStore extends JdbcAbstractAccess implements NodeGrou
         }
 
         List<NodeGroupPo> rows = new SelectSql(getSqlTemplate())
+                .rowNumStart()
                 .select()
                 .all()
                 .from()
-                .table(getTableName())
+                .oracleTable(getTableName())
                 .whereSql(
                         new WhereSql()
-                                .andOnNotNull("node_type = ?", request.getNodeType() == null ? null : request.getNodeType().name())
-                                .andOnNotEmpty("name = ?", request.getNodeGroup())
+                                .andOnNotNull("NODE_TYPE = ?", request.getNodeType() == null ? null : request.getNodeType().name())
+                                .andOnNotEmpty("NAME = ?", request.getNodeGroup())
                 )
                 .orderBy()
-                .column("gmt_created", OrderByType.DESC)
-                .limit(request.getStart(), request.getLimit())
+                .column("GMT_CREATED", OrderByType.DESC)
+                .rowNumEnd(request.getStart(), request.getLimit())
                 .list(RshHolder.NODE_GROUP_LIST_RSH);
 
         response.setRows(rows);
@@ -109,6 +113,6 @@ public class OracleNodeGroupStore extends JdbcAbstractAccess implements NodeGrou
     }
 
     private String getTableName() {
-        return JobQueueUtils.NODE_GROUP_STORE;
+        return JobQueueUtils.NODE_GROUP_STORE.toUpperCase();
     }
 }

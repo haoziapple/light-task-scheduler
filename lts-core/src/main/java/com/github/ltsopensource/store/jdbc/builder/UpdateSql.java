@@ -36,6 +36,11 @@ public class UpdateSql {
         return this;
     }
 
+    public UpdateSql oracleTable(String table) {
+        sql.append(table);
+        return this;
+    }
+
     public UpdateSql set(String column, Object value) {
         if (params.size() > 0) {
             sql.append(",");
