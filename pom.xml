@@ -13,7 +13,7 @@
     <groupId>com.github.ltsopensource</groupId>
     <artifactId>lts-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.7.2-SNAPSHOT</version>
+    <version>1.7.3-SNAPSHOT</version>
     <url>https://github.com/ltsopensource/light-task-scheduler.git</url>
     <modules>
         <module>lts-core</module>
@@ -25,6 +25,7 @@
         <module>lts-startup</module>
         <module>lts-monitor</module>
         <module>lts</module>
+        <module>mytest</module>
     </modules>
 
     <properties>
