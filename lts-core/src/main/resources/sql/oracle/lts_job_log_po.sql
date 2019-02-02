@@ -32,7 +32,3 @@ create table LTS_JOB_LOG_PO
 create index IDX1_JOB_LOG on LTS_JOB_LOG_PO (log_time);
 create index IDX2_JOB_LOG on LTS_JOB_LOG_PO (task_id,task_tracker_node_group);
 create index IDX3_JOB_LOG on LTS_JOB_LOG_PO (real_task_id,task_tracker_node_group);
-
-CREATE SEQUENCE SEQ_JOB_LOG_PO
-  START WITH 1
-  INCREMENT BY 1;

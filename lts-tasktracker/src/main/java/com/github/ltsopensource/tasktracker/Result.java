@@ -16,6 +16,9 @@ public class Result {
 
     public Result(Action action, String msg) {
         this.action = action;
+        if (msg != null && msg.length() > 1000) {
+            msg = msg.substring(0, 1000);
+        }
         this.msg = msg;
     }
 
@@ -36,6 +39,9 @@ public class Result {
     }
 
     public void setMsg(String msg) {
+        if (msg != null && msg.length() > 1000) {
+            msg = msg.substring(0, 1000);
+        }
         this.msg = msg;
     }
 }

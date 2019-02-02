@@ -34,7 +34,3 @@ create index IDX2_{tableName} on {tableName} (JOB_TYPE);
 create index IDX3_{tableName} on {tableName} (REAL_TASK_ID, TASK_TRACKER_NODE_GROUP);
 create index IDX4_{tableName} on {tableName} (PRIORITY,TRIGGER_TIME,GMT_CREATED);
 create index IDX5_{tableName} on {tableName} (IS_RUNNING);
-
-CREATE SEQUENCE SEQ_{tableName}
-  START WITH 1
-  INCREMENT BY 1;

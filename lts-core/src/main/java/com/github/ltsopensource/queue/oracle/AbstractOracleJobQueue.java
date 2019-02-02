@@ -1,5 +1,6 @@
 package com.github.ltsopensource.queue.oracle;
 
+import com.github.ltsopensource.SnowFlakeWorker;
 import com.github.ltsopensource.admin.request.JobQueueReq;
 import com.github.ltsopensource.admin.response.PaginationRsp;
 import com.github.ltsopensource.core.cluster.Config;
@@ -52,9 +53,10 @@ public abstract class AbstractOracleJobQueue extends JdbcAbstractAccess implemen
                         "TRIGGER_TIME",
                         "REPEAT_COUNT",
                         "REPEATED_COUNT",
-                        "REPEAT_INTERVAL")
+                        "REPEAT_INTERVAL"
+                )
                 .values(
-                        "SEQ_" + tableName + ".nextval",
+                        SnowFlakeWorker.getId(),
                         jobPo.getJobId(),
                         jobPo.getJobType() == null ? null : jobPo.getJobType().name(),
                         jobPo.getPriority(),
@@ -76,7 +78,8 @@ public abstract class AbstractOracleJobQueue extends JdbcAbstractAccess implemen
                         jobPo.getTriggerTime(),
                         jobPo.getRepeatCount(),
                         jobPo.getRepeatedCount(),
-                        jobPo.getRepeatInterval())
+                        jobPo.getRepeatInterval()
+                )
                 .doInsert() == 1;
     }
 

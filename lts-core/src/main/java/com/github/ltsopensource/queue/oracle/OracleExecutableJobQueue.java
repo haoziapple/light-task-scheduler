@@ -22,7 +22,7 @@ import java.util.List;
  * @Description 可执行队列是通过创建中间表保存的
  * @date 2018-11-15 17:26
  */
-public class OracleExecutableJobQueue extends AbstractMysqlJobQueue implements ExecutableJobQueue {
+public class OracleExecutableJobQueue extends AbstractOracleJobQueue implements ExecutableJobQueue {
 
     public OracleExecutableJobQueue(Config config) {
         super(config);

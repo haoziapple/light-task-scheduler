@@ -31,7 +31,3 @@ create table {tableName}
 
 create index IDX1_{tableName} on {tableName} (REAL_TASK_ID, TASK_TRACKER_NODE_GROUP);
 create index IDX2_{tableName} on {tableName} (RELY_ON_PREV_CYCLE, LAST_GENERATE_TRIGGER_TIME);
-
-CREATE SEQUENCE SEQ_{tableName}
-  START WITH 1
-  INCREMENT BY 1;

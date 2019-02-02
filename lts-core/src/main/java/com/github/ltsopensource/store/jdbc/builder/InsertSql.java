@@ -131,9 +131,11 @@ public class InsertSql {
         try {
             return sqlTemplate.insert(execSql, params.get(0));
         } catch (SQLException e) {
-            if (e.getMessage().contains("Duplicate entry")) {
+            if (e.getMessage().contains("Duplicate entry")
+                    || e.getMessage().contains("ORA-00001")) {
                 throw new DupEntryException("Insert SQL Error:" + execSql, e);
-            } else if (e.getMessage().contains("doesn't exist Query:")) {
+            } else if (e.getMessage().contains("doesn't exist Query:")
+                    || e.getMessage().contains("ORA-00942")) {
                 throw new TableNotExistException("Insert SQL Error:" + execSql, e);
             }
             throw new JdbcException("Insert SQL Error:" + execSql, e);
@@ -161,9 +163,11 @@ public class InsertSql {
             }
             return sqlTemplate.batchInsert(finalSQL, objects);
         } catch (SQLException e) {
-            if (e.getMessage().contains("Duplicate entry")) {
+            if (e.getMessage().contains("Duplicate entry")
+                    || e.getMessage().contains("ORA-00001")) {
                 throw new DupEntryException("Insert SQL Error:" + SQLFormatter.format(finalSQL), e);
-            } else if (e.getMessage().contains("doesn't exist Query:")) {
+            } else if (e.getMessage().contains("doesn't exist Query:")
+                    || e.getMessage().contains("ORA-00942")) {
                 throw new TableNotExistException("Insert SQL Error:" + SQLFormatter.format(finalSQL), e);
             }
             throw new JdbcException("Insert SQL Error:" + SQLFormatter.format(finalSQL), e);

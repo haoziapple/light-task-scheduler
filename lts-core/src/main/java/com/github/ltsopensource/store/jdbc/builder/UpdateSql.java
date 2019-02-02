@@ -52,6 +52,17 @@ public class UpdateSql {
         return this;
     }
 
+    public UpdateSql oracleSet(String column, Object value) {
+        if (params.size() > 0) {
+            sql.append(",");
+        } else {
+            sql.append(" SET ");
+        }
+        sql.append(column).append(" = ? ");
+        params.add(value);
+        return this;
+    }
+
     public UpdateSql setOnNotNull(String column, Object value) {
         if (value == null) {
             return this;

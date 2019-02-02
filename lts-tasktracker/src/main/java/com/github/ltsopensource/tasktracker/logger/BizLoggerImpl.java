@@ -110,6 +110,9 @@ public class BizLoggerImpl extends BizLoggerAdapter implements BizLogger {
         bizLog.setTaskId(jobMeta.getJob().getTaskId());
         bizLog.setRealTaskId(jobMeta.getRealTaskId());
         bizLog.setJobType(jobMeta.getJobType());
+        if (msg != null && msg.length() > 1000) {
+            msg = msg.substring(0, 1000);
+        }
         bizLog.setMsg(msg);
         bizLog.setLevel(level);
 

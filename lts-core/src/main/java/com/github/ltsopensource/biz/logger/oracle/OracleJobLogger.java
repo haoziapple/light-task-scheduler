@@ -1,5 +1,6 @@
 package com.github.ltsopensource.biz.logger.oracle;
 
+import com.github.ltsopensource.SnowFlakeWorker;
 import com.github.ltsopensource.admin.response.PaginationRsp;
 import com.github.ltsopensource.biz.logger.JobLogger;
 import com.github.ltsopensource.biz.logger.domain.JobLogPo;
@@ -56,37 +57,41 @@ public class OracleJobLogger extends JdbcAbstractAccess implements JobLogger {
 
     private InsertSql buildInsertSql() {
         return new InsertSql(getSqlTemplate())
-                .insert(getTableName())
-                .columns("log_time",
-                        "gmt_created",
-                        "log_type",
-                        "success",
-                        "msg",
-                        "task_tracker_identity",
-                        "level",
-                        "task_id",
-                        "real_task_id",
-                        "job_id",
-                        "job_type",
-                        "priority",
-                        "submit_node_group",
-                        "task_tracker_node_group",
-                        "ext_params",
-                        "internal_ext_params",
-                        "need_feedback",
-                        "cron_expression",
-                        "trigger_time",
-                        "retry_times",
-                        "max_retry_times",
-                        "rely_on_prev_cycle",
-                        "repeat_count",
-                        "repeated_count",
-                        "repeat_interval"
+                .oracleInsert(getTableName())
+                .oracleColumns(
+                        "ID",
+                        "LOG_TIME",
+                        "GMT_CREATED",
+                        "LOG_TYPE",
+                        "SUCCESS",
+                        "MSG",
+                        "TASK_TRACKER_IDENTITY",
+                        "JOB_LEVEL",
+                        "TASK_ID",
+                        "REAL_TASK_ID",
+                        "JOB_ID",
+                        "JOB_TYPE",
+                        "PRIORITY",
+                        "SUBMIT_NODE_GROUP",
+                        "TASK_TRACKER_NODE_GROUP",
+                        "EXT_PARAMS",
+                        "INTERNAL_EXT_PARAMS",
+                        "NEED_FEEDBACK",
+                        "CRON_EXPRESSION",
+                        "TRIGGER_TIME",
+                        "RETRY_TIMES",
+                        "MAX_RETRY_TIMES",
+                        "RELY_ON_PREV_CYCLE",
+                        "REPEAT_COUNT",
+                        "REPEATED_COUNT",
+                        "REPEAT_INTERVAL"
                 );
     }
 
     private InsertSql setInsertSqlValues(InsertSql insertSql, JobLogPo jobLogPo) {
-        return insertSql.values(jobLogPo.getLogTime(),
+        return insertSql.values(
+                SnowFlakeWorker.getId(),
+                jobLogPo.getLogTime(),
                 jobLogPo.getGmtCreated(),
                 jobLogPo.getLogType().name(),
                 jobLogPo.isSuccess(),

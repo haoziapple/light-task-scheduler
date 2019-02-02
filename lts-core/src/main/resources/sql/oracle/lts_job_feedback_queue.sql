@@ -7,7 +7,3 @@ create table {tableName}
 );
 
 create index IDX1_{tableName} on {tableName} (GMT_CREATED);
-
-CREATE SEQUENCE SEQ_{tableName}
-  START WITH 1
-  INCREMENT BY 1;
