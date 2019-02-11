@@ -37,6 +37,6 @@ public class OracleMonitorAccessFactory implements MonitorAccessFactory {
 
     @Override
     public JobClientMAccess getJobClientMAccess(Config config) {
-        return null;
+        return new OracleJobClientMAccess(config);
     }
 }

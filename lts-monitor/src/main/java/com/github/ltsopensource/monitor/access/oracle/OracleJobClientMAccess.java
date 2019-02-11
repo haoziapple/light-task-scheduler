@@ -25,7 +25,7 @@ public class OracleJobClientMAccess extends OracleAbstractJdbcAccess implements 
             return;
         }
         InsertSql insertSql = new InsertSql(getSqlTemplate())
-                .oracleInsert(getTableName())
+                .oracleInsert(getTableName().toUpperCase())
                 .oracleColumns(
                         "ID",
                         "GMT_CREATED",
@@ -57,6 +57,6 @@ public class OracleJobClientMAccess extends OracleAbstractJdbcAccess implements 
 
     @Override
     protected String getTableName() {
-        return "lts_admin_job_client_monitor_data";
+        return "lts_admin_job_client_mdata";
     }
 }

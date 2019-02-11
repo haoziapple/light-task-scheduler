@@ -15,6 +15,7 @@ import com.github.ltsopensource.store.jdbc.JdbcAbstractAccess;
 import com.github.ltsopensource.store.jdbc.builder.*;
 import com.github.ltsopensource.store.jdbc.dbutils.JdbcTypeUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -89,13 +90,13 @@ public abstract class AbstractOracleJobQueue extends JdbcAbstractAccess implemen
 
         WhereSql whereSql = buildWhereSql(request);
 
-        Long results = new SelectSql(getSqlTemplate())
+        Long results = ((BigDecimal)new SelectSql(getSqlTemplate())
                 .select()
                 .columns("count(1)")
                 .from()
                 .oracleTable(getTableName(request))
                 .whereSql(whereSql)
-                .single();
+                .single()).longValue();
         response.setResults(results.intValue());
 
         if (results > 0) {

@@ -59,6 +59,6 @@ public class OracleTaskTrackerMAccess extends OracleAbstractJdbcAccess implement
 
     @Override
     protected String getTableName() {
-        return "lts_admin_task_tracker_monitor_data";
+        return "lts_admin_task_tracker_mdata";
     }
 }

@@ -75,7 +75,7 @@ public class OracleNodeGroupStore extends JdbcAbstractAccess implements NodeGrou
     public PaginationRsp<NodeGroupPo> getNodeGroup(NodeGroupGetReq request) {
         PaginationRsp<NodeGroupPo> response = new PaginationRsp<NodeGroupPo>();
 
-        Long results = new SelectSql(getSqlTemplate())
+        Long results = ((BigDecimal) new SelectSql(getSqlTemplate())
                 .select()
                 .columns("count(1)")
                 .from()
@@ -85,7 +85,7 @@ public class OracleNodeGroupStore extends JdbcAbstractAccess implements NodeGrou
                                 .andOnNotNull("NODE_TYPE = ?", request.getNodeType() == null ? null : request.getNodeType().name())
                                 .andOnNotEmpty("NAME = ?", request.getNodeGroup())
                 )
-                .single();
+                .single()).longValue();
         response.setResults(results.intValue());
         if (results == 0) {
             return response;

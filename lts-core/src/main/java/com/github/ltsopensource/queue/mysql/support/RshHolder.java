@@ -152,6 +152,48 @@ public class RshHolder {
             return result;
         }
     };
+
+    public static final ResultSetHandler<List<JobLogPo>> ORACLE_JOB_LOGGER_LIST_RSH = new ResultSetHandler<List<JobLogPo>>() {
+        @Override
+        public List<JobLogPo> handle(ResultSet rs) throws SQLException {
+            List<JobLogPo> result = new ArrayList<JobLogPo>();
+            while (rs.next()) {
+                JobLogPo jobLogPo = new JobLogPo();
+                jobLogPo.setLogTime(rs.getLong("log_time"));
+                jobLogPo.setGmtCreated(rs.getLong("gmt_created"));
+                jobLogPo.setLogType(LogType.valueOf(rs.getString("log_type")));
+                jobLogPo.setSuccess(rs.getBoolean("success"));
+                jobLogPo.setMsg(rs.getString("msg"));
+                jobLogPo.setTaskTrackerIdentity(rs.getString("task_tracker_identity"));
+                jobLogPo.setLevel(Level.valueOf(rs.getString("job_level")));
+                jobLogPo.setTaskId(rs.getString("task_id"));
+                jobLogPo.setRealTaskId(rs.getString("real_task_id"));
+                String jobType = rs.getString("job_type");
+                if (StringUtils.isNotEmpty(jobType)) {
+                    jobLogPo.setJobType(JobType.valueOf(jobType));
+                }
+                jobLogPo.setJobId(rs.getString("job_id"));
+                jobLogPo.setPriority(rs.getInt("priority"));
+                jobLogPo.setSubmitNodeGroup(rs.getString("submit_node_group"));
+                jobLogPo.setTaskTrackerNodeGroup(rs.getString("task_tracker_node_group"));
+                jobLogPo.setExtParams(JSON.parse(rs.getString("ext_params"), new TypeReference<Map<String, String>>() {
+                }));
+                jobLogPo.setInternalExtParams(JSON.parse(rs.getString("internal_ext_params"), new TypeReference<HashMap<String, String>>() {
+                }));
+                jobLogPo.setNeedFeedback(rs.getBoolean("need_feedback"));
+                jobLogPo.setCronExpression(rs.getString("cron_expression"));
+                jobLogPo.setTriggerTime(rs.getLong("trigger_time"));
+                jobLogPo.setRetryTimes(rs.getInt("retry_times"));
+                jobLogPo.setMaxRetryTimes(rs.getInt("max_retry_times"));
+                jobLogPo.setDepPreCycle(rs.getBoolean("rely_on_prev_cycle"));
+                jobLogPo.setRepeatCount(rs.getInt("repeat_count"));
+                jobLogPo.setRepeatedCount(rs.getInt("repeated_count"));
+                jobLogPo.setRepeatInterval(rs.getLong("repeat_interval"));
+                result.add(jobLogPo);
+            }
+            return result;
+        }
+    };
 }
 
 

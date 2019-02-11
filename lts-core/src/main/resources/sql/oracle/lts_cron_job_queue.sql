@@ -2,7 +2,7 @@ create table {tableName}
 (
   id  NUMBER(20) not null,
   job_id VARCHAR2(32),
-  job_type  VARCHAR(32),
+  job_type  VARCHAR2(32),
   priority  NUMBER(11),
   retry_times NUMBER(20) DEFAULT 0,
   max_retry_times NUMBER(11) DEFAULT 0,

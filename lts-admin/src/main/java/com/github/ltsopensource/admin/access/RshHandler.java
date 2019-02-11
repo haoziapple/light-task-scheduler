@@ -10,6 +10,7 @@ import com.github.ltsopensource.store.jdbc.dbutils.ResultSetHandler;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -97,6 +98,31 @@ public class RshHandler {
                 log.setPort(rs.getInt("port"));
                 log.setHostName(rs.getString("host_name"));
                 log.setGroup(rs.getString("group"));
+                log.setCreateTime(rs.getLong("create_time"));
+                log.setThreads(rs.getInt("threads"));
+                log.setIdentity(rs.getString("identity"));
+                log.setHttpCmdPort(rs.getInt("http_cmd_port"));
+                list.add(log);
+            }
+            return list;
+        }
+    };
+
+    public static final ResultSetHandler<List<NodeOnOfflineLog>> ORACLE_NODE_ON_OFFLINE_LOG_LIST_RSH = new ResultSetHandler<List<NodeOnOfflineLog>>() {
+        @Override
+        public List<NodeOnOfflineLog> handle(ResultSet rs) throws SQLException {
+
+            List<NodeOnOfflineLog> list = new ArrayList<NodeOnOfflineLog>();
+            while (rs.next()) {
+                NodeOnOfflineLog log = new NodeOnOfflineLog();
+                log.setLogTime(new Date(rs.getLong("log_time")));
+                log.setEvent(rs.getString("event"));
+                log.setNodeType(NodeType.convert(rs.getString("node_type")));
+                log.setClusterName(rs.getString("cluster_name"));
+                log.setIp(rs.getString("ip"));
+                log.setPort(rs.getInt("port"));
+                log.setHostName(rs.getString("host_name"));
+                log.setGroup(rs.getString("node_group"));
                 log.setCreateTime(rs.getLong("create_time"));
                 log.setThreads(rs.getInt("threads"));
                 log.setIdentity(rs.getString("identity"));

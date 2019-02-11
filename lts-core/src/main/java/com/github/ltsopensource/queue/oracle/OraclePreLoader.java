@@ -86,8 +86,14 @@ public class OraclePreLoader extends AbstractPreLoader {
     }
 
     private String getTableName(String taskTrackerNodeGroup) {
-        return JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup)
+        String tableName = JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup)
                 .replaceAll("-", "_")
                 .toUpperCase();
+
+        if(tableName.length() > 25) {
+            tableName = tableName.substring(0, 25);
+        }
+
+        return tableName;
     }
 }

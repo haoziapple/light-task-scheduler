@@ -55,6 +55,6 @@ public class OracleJobTrackerMAccess extends OracleAbstractJdbcAccess implements
 
     @Override
     protected String getTableName() {
-        return "lts_admin_job_tracker_monitor_data";
+        return "lts_admin_job_tracker_mdata";
     }
 }

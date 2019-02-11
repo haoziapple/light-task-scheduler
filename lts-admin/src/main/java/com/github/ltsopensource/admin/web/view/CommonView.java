@@ -24,7 +24,10 @@ public class CommonView {
     private BackendAppContext appContext;
 
     @RequestMapping("index")
-    public String index(){
+    public String index(Model model){
+        Date endDate = new Date();
+        model.addAttribute("startTime", DateUtils.formatYMD_HMS(DateUtils.addHour(endDate, -3)));
+        model.addAttribute("endTime", DateUtils.formatYMD_HMS(endDate));
         return "index";
     }
 
